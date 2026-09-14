@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI 1등급 문제 공작소 - 실전 모의고사 에디션</title>
+    <title>AI 1등급 문제 공작소 - 10제 누적 에디션 (20MB 지원)</title>
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,14 +20,13 @@
             --text-main: #0F172A; --text-sub: #475569;
             --accent-primary: #4F46E5; --accent-killer: #E11D48; --accent-fusion: #7C3AED;
             --border-soft: #CBD5E1;
-            --shadow-box: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --shadow-box: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             --radius-box: 16px; --radius-btn: 10px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: var(--bg-body); color: var(--text-main); line-height: 1.7; }
         .app-container { display: flex; max-width: 1400px; margin: 0 auto; min-height: 100vh; }
         
-        /* 사이드바 */
         .sidebar { width: 280px; background: var(--bg-surface); border-right: 1px solid var(--border-soft); display: flex; flex-direction: column; padding: 30px 0; }
         .brand { padding: 0 30px 20px; font-size: 1.5rem; font-weight: 900; color: var(--accent-primary); display: flex; align-items: center; gap: 10px; }
         .menu-label { padding: 0 30px; font-size: 0.8rem; font-weight: 800; color: var(--text-sub); margin-bottom: 10px; margin-top: 20px; text-transform: uppercase; }
@@ -38,7 +37,6 @@
         .settings-section { margin-top: auto; padding: 20px 30px; border-top: 1px solid var(--border-soft); background: #F8FAFC; }
         .settings-section input { width: 100%; padding: 10px; border: 1px solid var(--border-soft); border-radius: var(--radius-btn); }
         
-        /* 메인 컨텐츠 */
         .main-content { flex: 1; padding: 40px; max-width: 950px; }
         .page-section { display: none; animation: fadeIn 0.3s; }
         .page-section.active { display: block; }
@@ -48,7 +46,6 @@
         .page-title { font-size: 1.8rem; font-weight: 900; }
         .page-desc { color: var(--text-sub); }
         
-        /* 폼 패널 */
         .panel { background: var(--bg-surface); padding: 35px; border-radius: var(--radius-box); box-shadow: var(--shadow-box); margin-bottom: 30px; }
         .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
         .form-group { flex: 1; margin-bottom: 20px; }
@@ -62,59 +59,38 @@
         .btn-primary { background: var(--accent-primary); color: white; border: none; padding: 18px 24px; border-radius: var(--radius-btn); font-size: 1.15rem; font-weight: 800; cursor: pointer; width: 100%; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4); }
         
-        /* 액션 바 (정답, PDF) */
+        .btn-append { background: #10B981; margin-top: 15px; display: none; }
+        .btn-append:hover { background: #059669; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
+
         .action-bar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 15px; }
         .btn-action { padding: 10px 16px; border-radius: 8px; font-weight: 800; cursor: pointer; border: none; color: white; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-reveal { background: var(--accent-killer); } .btn-reveal:hover { background: #BE123C; }
         .btn-pdf { background: var(--text-main); } .btn-pdf:hover { background: #334155; }
         .btn-del { background: #EF4444; } .btn-del:hover { background: #DC2626; }
         
-        /* 🔥 실전 모의고사 뷰어 스타일링 (가독성 극대화) */
         .document-wrapper { display: none; }
-        .document-view { background: white; padding: 60px; border-radius: var(--radius-box); box-shadow: var(--shadow-box); color: #111827; font-size: 1.1rem; line-height: 2.0; }
+        .document-view { background: white; padding: 60px; border-radius: var(--radius-box); box-shadow: var(--shadow-box); color: #111827; font-size: 1.05rem; line-height: 2.0; }
         
-        /* 문제 번호 및 제목 포맷팅 */
-        .document-view h2 { margin: 40px 0 20px; font-weight: 900; color: var(--text-main); font-size: 1.8rem; border-bottom: 3px solid var(--text-main); padding-bottom: 15px; letter-spacing: -0.05em; }
-        .document-view h3 { margin: 40px 0 15px; font-weight: 800; color: #1E3A8A; font-size: 1.3rem; } /* 문제 번호 헤딩 */
+        .document-view h2 { margin: 40px 0 20px; font-weight: 900; color: var(--text-main); font-size: 1.6rem; border-bottom: 3px solid var(--text-main); padding-bottom: 15px; }
+        .document-view h3 { margin: 40px 0 15px; font-weight: 800; color: var(--accent-primary); font-size: 1.25rem; } 
         
-        /* 🔥 실제 모의고사 <보기> 박스 구현 */
-        .document-view blockquote { 
-            border: 1px solid #64748B; /* 실전 시험지 같은 단정한 선 */
-            background: #FFFFFF; 
-            padding: 25px 30px; 
-            margin: 20px 0 30px 0; 
-            border-radius: 2px; /* 라운드 거의 없이 각진 느낌 */
-            font-weight: 500; 
-            color: #0F172A;
-            line-height: 1.8;
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
-        }
-        
-        /* 본문 문단 및 리스트 (여백 넓힘) */
-        .document-view p { margin-bottom: 20px; }
-        .document-view ul, .document-view ol { margin-bottom: 25px; padding-left: 25px; }
-        .document-view li { margin-bottom: 12px; }
-        
-        /* 강조 표시 */
+        .document-view blockquote { border: 1px solid #64748B; background: #FFFFFF; padding: 25px 30px; margin: 20px 0 30px 0; border-radius: 4px; font-weight: 500; color: #0F172A; line-height: 1.8; box-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
+        .document-view p { margin-bottom: 15px; }
         .document-view strong { background: rgba(79, 70, 229, 0.1); padding: 0 4px; border-radius: 4px; font-weight: 800; color: var(--accent-primary); }
         
-        /* 정답 및 해설 영역 (숨김 처리) */
-        .answer-section { display: none; border-top: 3px dashed var(--border-soft); margin-top: 50px; padding-top: 40px; }
+        .answer-section { display: none; border-top: 4px dashed var(--border-soft); margin-top: 60px; padding-top: 40px; }
         .answer-section h2 { border-bottom-color: var(--accent-killer); color: var(--accent-killer); }
 
-        /* 로딩 & 에러 */
         .loader { display: none; text-align: center; padding: 40px; font-weight: 800; color: var(--accent-primary); font-size: 1.1rem; }
         .spinner { display: inline-block; width: 28px; height: 28px; border: 4px solid var(--border-soft); border-top-color: currentColor; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 12px; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .error-box { display: none; padding: 20px; background: #FEF2F2; color: #EF4444; border: 2px dashed #EF4444; border-radius: var(--radius-btn); margin-top: 15px; font-weight: 800; }
         
-        /* 보관함 리스트 */
         .archive-list { display: flex; flex-direction: column; gap: 15px; }
         .archive-item { background: white; padding: 25px; border-radius: var(--radius-box); box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-soft); transition: 0.2s; }
         .archive-item:hover { border-color: var(--accent-primary); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(79, 70, 229, 0.1); }
         .archive-info { flex: 1; cursor: pointer; }
         .archive-title { font-size: 1.25rem; font-weight: 900; margin-bottom: 8px; color: var(--text-main); }
-        .archive-meta { font-size: 0.9rem; color: var(--text-sub); margin-top: 10px;}
         .tag-badge { background: #E2E8F0; padding: 4px 10px; border-radius: 6px; margin-right: 8px; font-weight: 700; color: #334155; font-size: 0.85rem;}
         
         @media (max-width: 768px) { .form-row { flex-direction: column; gap: 0; } .sidebar { display: none; } .document-view { padding: 30px 20px; } }
@@ -126,8 +102,8 @@
         <nav class="sidebar no-print">
             <div class="brand"><i class="fa-solid fa-flask"></i> Test Factory</div>
             <div class="menu-label">Create Test</div>
-            <div class="menu-item active" onclick="navTo('single')"><i class="fa-solid fa-file-pen"></i> 문제 출제소 (단일 지문)</div>
-            <div class="menu-item" onclick="navTo('fusion')"><i class="fa-solid fa-fire-flame-curved"></i> 융합형 킬러 보스전</div>
+            <div class="menu-item active" onclick="navTo('single')"><i class="fa-solid fa-file-pen"></i> 문제 출제소 (단일)</div>
+            <div class="menu-item" onclick="navTo('fusion')"><i class="fa-solid fa-fire-flame-curved"></i> 융합형 보스전</div>
             
             <div class="menu-label">Storage</div>
             <div class="menu-item" onclick="navTo('archive')"><i class="fa-solid fa-box-archive"></i> 모의고사 보관함</div>
@@ -139,13 +115,13 @@
         </nav>
 
         <main class="main-content">
-            <!-- 1. 단일 지문 문제 생성 (20제) -->
+            <!-- 1. 단일 지문 문제 생성 -->
             <section id="page-single" class="page-section active">
                 <div class="page-header">
                     <div class="page-icon"><i class="fa-solid fa-file-pen"></i></div>
                     <div>
                         <h2 class="page-title">실전 모의고사 출제소</h2>
-                        <p class="page-desc">제공된 텍스트를 바탕으로 실전 수능/내신 대비용 20문항 세트를 생성합니다.</p>
+                        <p class="page-desc">10문제씩 출제하며, 완료 후 추가로 문항을 덧붙일 수 있습니다.</p>
                     </div>
                 </div>
                 
@@ -153,49 +129,54 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>시험지 제목</label>
-                            <input type="text" id="singleTitle" placeholder="예: [문학] 파우스트 1부 실전 대비 모의고사">
+                            <input type="text" id="singleTitle" placeholder="예: [문학] 파우스트 실전 대비">
                         </div>
                         <div class="form-group">
                             <label>과목/태그</label>
-                            <input type="text" id="singleTags" placeholder="예: 국어, 문학, 실전모의">
+                            <input type="text" id="singleTags" placeholder="예: 국어, 문학">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>출제할 모의고사 유형 (문항 수)</label>
+                        <label>출제할 모의고사 유형 (10문제 기준)</label>
                         <select id="singleType">
-                            <option value="concept">실전 개념 모의고사 (객관식 15제 + 서술형 5제 = 총 20제)</option>
-                            <option value="hard_mcq">고난도 선지 타파 모의고사 (매력적 오답 풀 객관식 20제)</option>
-                            <option value="killer">최상위권 킬러 모의고사 (합답형 및 추론형 10제~15제)</option>
+                            <option value="concept">실전 개념 확인 (객관식 7제 + 서술형 3제)</option>
+                            <option value="hard_mcq">고난도 선지 타파 (매력적 오답 풀 객관식 10제)</option>
+                            <option value="killer">최상위권 킬러 (추론 및 합답형 10제)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>출제 기반 텍스트 (지문)</label>
-                        <textarea id="singlePrompt" rows="8" placeholder="분석할 문학 작품, 독해 지문, 또는 수학 개념 등을 충분히 붙여넣으세요. 내용이 길수록 20문제가 더 정교하게 나옵니다."></textarea>
+                        <textarea id="singlePrompt" rows="6" placeholder="분석할 지문을 붙여넣으세요."></textarea>
                     </div>
                     <div class="form-group">
-                        <label>교재 사진/PDF 첨부 (선택)</label>
+                        <!-- 🔥 용량 제한 20MB로 변경 및 안내 텍스트 수정 -->
+                        <label>교재 사진/PDF 첨부 (20MB 이하 권장)</label>
                         <div class="upload-zone">
                             <input type="file" id="singleFile" accept="image/*,.pdf,.txt" onchange="handleFile('singleFile', 'singlePreview')">
-                            <i class="fa-solid fa-file-arrow-up" style="font-size:2.5rem; color:#94A3B8; margin-bottom:15px;"></i>
+                            <i class="fa-solid fa-file-arrow-up" style="font-size:2rem; color:#94A3B8; margin-bottom:10px;"></i>
                             <div style="font-weight: 700;">클릭하여 파일 첨부</div>
+                            <div style="font-size:0.85rem; color:#64748B; margin-top:5px;">(10MB 이상 파일은 전송에 시간이 걸릴 수 있습니다)</div>
                             <div id="singlePreview" style="display:none; color:var(--accent-primary); font-weight:800; margin-top:10px;"></div>
                         </div>
                     </div>
-                    <button class="btn-primary" onclick="generateTest('single')"><i class="fa-solid fa-hammer"></i> 실전 20제 모의고사 출제 시작 (약 30초 소요)</button>
+                    
+                    <button class="btn-primary" onclick="generateTest('single', false)"><i class="fa-solid fa-play"></i> 10문제 출제 시작</button>
+                    <!-- 이어붙이기 버튼 -->
+                    <button class="btn-primary btn-append" id="singleAppendBtn" onclick="generateTest('single', true)"><i class="fa-solid fa-plus"></i> 10문제 추가 출제 (기존 시험지에 누적)</button>
+                    
                     <div id="singleError" class="error-box"></div>
                 </div>
                 
-                <div id="singleLoader" class="loader"><div class="spinner"></div>AI 출제위원이 20문제를 꼼꼼하게 설계하고 있습니다... (문항 수가 많아 조금 걸릴 수 있어요)</div>
+                <div id="singleLoader" class="loader"><div class="spinner"></div>AI가 10문제를 꼼꼼하게 설계하고 있습니다...</div>
                 
                 <div id="singleResultWrapper" class="document-wrapper">
                     <div class="action-bar no-print">
-                        <button class="btn-action btn-reveal" onclick="revealAnswer('pdfSingle')"><i class="fa-solid fa-unlock-keyhole"></i> 정답 및 상세 해설 보기</button>
+                        <button class="btn-action btn-reveal" onclick="revealAnswer('pdfSingle')"><i class="fa-solid fa-unlock-keyhole"></i> 정답 및 전체 해설 보기</button>
                         <button class="btn-action btn-pdf" onclick="downloadPDF('pdfSingle', '실전모의고사')"><i class="fa-solid fa-file-pdf"></i> 모의고사 PDF 다운로드</button>
                     </div>
                     <div id="pdfSingle" class="document-view">
-                        <!-- 문제 렌더링 영역 -->
                         <div id="singleQuestionArea"></div>
-                        <!-- 해설 렌더링 영역 (초기 숨김) -->
+                        <!-- 해설 영역 -->
                         <div class="answer-section" id="singleAnswerArea"></div>
                     </div>
                 </div>
@@ -207,7 +188,7 @@
                     <div class="page-icon" style="background: var(--accent-fusion);"><i class="fa-solid fa-fire-flame-curved"></i></div>
                     <div>
                         <h2 class="page-title">융합형 킬러 보스전</h2>
-                        <p class="page-desc">2개의 전혀 다른 지문/개념을 엮어 초고난도 추론 문제 세트를 생성합니다.</p>
+                        <p class="page-desc">2개의 전혀 다른 지문을 엮어 고난도 추론 10문제를 생성합니다.</p>
                     </div>
                 </div>
                 
@@ -219,22 +200,25 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label><i class="fa-solid fa-1"></i> 첫 번째 개념/지문 (지문 가)</label>
-                        <textarea id="fusionPrompt1" rows="5" placeholder="예: (가) 지문에 들어갈 내용을 입력하세요."></textarea>
+                        <label><i class="fa-solid fa-1"></i> 첫 번째 개념/지문 (가)</label>
+                        <textarea id="fusionPrompt1" rows="4"></textarea>
                     </div>
                     <div class="form-group">
-                        <label><i class="fa-solid fa-2"></i> 두 번째 개념/지문 (지문 나)</label>
-                        <textarea id="fusionPrompt2" rows="5" placeholder="예: (나) 지문에 들어갈 내용을 입력하세요."></textarea>
+                        <label><i class="fa-solid fa-2"></i> 두 번째 개념/지문 (나)</label>
+                        <textarea id="fusionPrompt2" rows="4"></textarea>
                     </div>
-                    <button class="btn-primary" style="background: var(--accent-fusion);" onclick="generateTest('fusion')"><i class="fa-solid fa-skull"></i> 융합 킬러 모의고사 출제 (10제 내외)</button>
+                    
+                    <button class="btn-primary" style="background: var(--accent-fusion);" onclick="generateTest('fusion', false)"><i class="fa-solid fa-skull"></i> 융합 10제 출제 시작</button>
+                    <button class="btn-primary btn-append" id="fusionAppendBtn" onclick="generateTest('fusion', true)"><i class="fa-solid fa-plus"></i> 10문제 추가 출제 (누적)</button>
+                    
                     <div id="fusionError" class="error-box"></div>
                 </div>
                 
-                <div id="fusionLoader" class="loader" style="color:var(--accent-fusion);"><div class="spinner"></div>두 개념의 교집합을 찾아 악랄한 문항들을 출제 중입니다...</div>
+                <div id="fusionLoader" class="loader" style="color:var(--accent-fusion);"><div class="spinner"></div>두 지문을 완벽히 융합하여 10제를 설계 중입니다...</div>
                 
                 <div id="fusionResultWrapper" class="document-wrapper">
                     <div class="action-bar no-print">
-                        <button class="btn-action btn-reveal" onclick="revealAnswer('pdfFusion')"><i class="fa-solid fa-unlock-keyhole"></i> 정답 및 해설 보기</button>
+                        <button class="btn-action btn-reveal" onclick="revealAnswer('pdfFusion')"><i class="fa-solid fa-unlock-keyhole"></i> 정답 및 전체 해설 보기</button>
                         <button class="btn-action btn-pdf" onclick="downloadPDF('pdfFusion', '융합킬러모의고사')"><i class="fa-solid fa-file-pdf"></i> 모의고사 PDF 다운로드</button>
                     </div>
                     <div id="pdfFusion" class="document-view">
@@ -250,7 +234,7 @@
                     <div class="page-icon" style="background: #10B981;"><i class="fa-solid fa-box-archive"></i></div>
                     <div>
                         <h2 class="page-title">모의고사 보관함</h2>
-                        <p class="page-desc">내가 생성한 모든 시험지와 해설을 영구적으로 보관합니다.</p>
+                        <p class="page-desc">출제한 모든 시험지와 해설을 영구 보관합니다.</p>
                     </div>
                 </div>
                 <div id="archiveList" class="archive-list"></div>
@@ -259,8 +243,12 @@
     </div>
 
     <script>
-        // DB 설정
-        localforage.config({ name: 'TestFactoryPro', storeName: 'TestVaultPro' });
+        localforage.config({ name: 'TestFactoryV3', storeName: 'VaultV3' });
+
+        // 출제 상태 누적을 위한 변수
+        let accumulatedQuestions = { single: "", fusion: "" };
+        let accumulatedAnswers = { single: "", fusion: "" };
+        let questionOffset = { single: 0, fusion: 0 }; 
 
         window.onload = () => {
             const savedKey = localStorage.getItem('geminiApiKey');
@@ -275,15 +263,18 @@
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
             
-            // 패널 복구
-            if(pageId === 'single') document.getElementById('singlePanel').style.display = 'block';
-            if(pageId === 'fusion') document.getElementById('fusionPanel').style.display = 'block';
             if(pageId === 'archive') loadArchive();
         }
 
+        // 🔥 용량 제한 20MB로 상향
         function handleFile(inputId, previewId) {
             const file = document.getElementById(inputId).files[0];
             if (file) {
+                if (file.size > 20 * 1024 * 1024) { 
+                    alert("파일 용량이 20MB를 초과했습니다. 더 작은 파일로 분할하거나 텍스트를 직접 복사해 주세요.");
+                    document.getElementById(inputId).value = "";
+                    return;
+                }
                 const preview = document.getElementById(previewId);
                 preview.style.display = 'block';
                 preview.innerText = `첨부 완료: ${file.name}`;
@@ -328,18 +319,14 @@
             });
         }
 
-        // 🔥 가독성 200% 향상: 실제 수능 모의고사 포맷팅 규칙
         const EXAM_FORMAT_RULES = `
-[실전 모의고사 포맷팅 절대 준수 규칙]
-1. 객관식 문제의 선지는 반드시 원문자(①, ②, ③, ④, ⑤)를 사용하세요. (예: ① 정답입니다.)
-2. 문제 상황이나 제시문이 들어가는 <보기> 영역은 반드시 마크다운 인용구(> )를 사용하여 박스 형태로 렌더링되게 만드세요. (예: > <보기>\n> 철수는 오늘 학교에 갔다.)
-3. 합답형(다중 선택) 문제의 보기는 ㄱ, ㄴ, ㄷ, ㄹ 기호를 사용하세요.
-4. 문제와 문제 사이는 줄바꿈을 넉넉히 하여 실제 시험지처럼 깔끔하게 띄어주세요. 
-5. 기호는 자유롭게 쓰되, 수식은 반드시 이중 달러 기호($$수식$$)로 감싸고 단일 달러기호($)는 쓰지 마세요.
-6. [가장 중요] 문제 출제가 모두 끝난 후, 반드시 새 줄에 '====ANSWER====' 라는 문자열을 정확히 한 번만 삽입하세요.
-7. '====ANSWER====' 문자열 아래에는 모든 문제의 정답과 매우 구체적인 해설을 작성하세요.`;
+[출제자 절대 준수 규칙 - 시스템 에러 방지용]
+1. 객관식 선지(①~⑤)는 가독성을 위해 **반드시 각각 새로운 줄(Enter)에서 시작**하세요. (한 줄에 이어서 쓰기 절대 금지)
+2. 문제 상황이나 제시문이 들어가는 <보기> 영역은 반드시 마크다운 인용구(> )를 사용하여 박스로 렌더링되게 하세요.
+3. 기호는 자유롭게 쓰되, 수식은 반드시 이중 달러 기호($$수식$$)를 사용하세요. 단일 달러기호($)는 절대 금지.
+4. [가장 중요] 10문제 출제가 모두 끝난 후, 반드시 새 줄에 '====ANSWER====' 라는 문자열을 정확히 한 번만 삽입하세요.
+5. '====ANSWER====' 문자열 아래에는 위에서 출제한 모든 문제의 정답과 상세한 해설을 한 번에 모아서 작성하세요. 절대 문제 바로 밑에 해설을 달지 마세요.`;
 
-        // API 호출 로직 (에러 방어 3중 적용)
         async function callGeminiAPI(prompt, files = []) {
             const apiKey = document.getElementById('sysApiKey').value;
             if (!apiKey) throw new Error("설정 메뉴에서 API Key를 먼저 입력해주세요.");
@@ -347,7 +334,6 @@
             let parts = [{ text: prompt }];
             files.forEach(f => parts.push({ inlineData: { data: f.data, mimeType: f.mimeType } }));
             
-            // 20문제 등 대량의 텍스트 생성을 위해 maxOutputTokens 상향 (필요시) 및 모델 1.5-flash 고정
             const options = {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -356,7 +342,7 @@
                 })
             };
 
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, options);
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, options);
             
             if (!response.ok) {
                 let errData = await response.json().catch(() => ({}));
@@ -365,109 +351,99 @@
 
             const data = await response.json();
             if (data.error) throw new Error(data.error.message);
+            if (!data.candidates || data.candidates.length === 0) throw new Error(`AI 생성이 차단되었습니다.`);
             
-            if (!data.candidates || data.candidates.length === 0) {
-                const blockReason = data.promptFeedback?.blockReason || "알 수 없는 이유";
-                throw new Error(`AI 생성이 차단되었습니다. (사유: ${blockReason}) - 텍스트를 확인해주세요.`);
-            }
-            const candidate = data.candidates[0];
-            if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
-                throw new Error(`결과 생성이 중단되었습니다. 다른 지문으로 시도해주세요.`);
-            }
-
-            return candidate.content.parts[0].text;
+            return data.candidates[0].content.parts[0].text;
         }
 
-        async function generateTest(mode) {
+        async function generateTest(mode, isAppend = false) {
             const loader = document.getElementById(mode + 'Loader');
             const errorBox = document.getElementById(mode + 'Error');
             const resultWrapper = document.getElementById(mode + 'ResultWrapper');
             const qArea = document.getElementById(mode + 'QuestionArea');
             const aArea = document.getElementById(mode + 'AnswerArea');
-            const panel = document.getElementById(mode + 'Panel');
+            const appendBtn = document.getElementById(mode + 'AppendBtn');
             
             loader.style.display = 'block'; 
             errorBox.style.display = 'none'; 
-            resultWrapper.style.display = 'none';
-            panel.style.display = 'none'; 
+            
+            if (!isAppend) {
+                accumulatedQuestions[mode] = "";
+                accumulatedAnswers[mode] = "";
+                questionOffset[mode] = 0;
+                resultWrapper.style.display = 'none';
+                appendBtn.style.display = 'none';
+            }
 
             try {
                 let prompt = "", title = "", files = [], tags = [];
+                let appendInstruction = isAppend ? `\n\n이전에 출제한 문제에 이어서 **${questionOffset[mode] + 1}번부터 ${questionOffset[mode] + 10}번까지 새로운 10문제**를 겹치지 않게 추가 출제하세요.` : "\n\n**1번부터 10번까지 총 10문제**를 출제하세요.";
 
                 if (mode === 'single') {
-                    title = document.getElementById('singleTitle').value || '단일 지문 실전 모의고사 20제';
-                    const tagsRaw = document.getElementById('singleTags').value;
-                    tags = tagsRaw ? tagsRaw.split(',').map(t=>t.trim()) : ['실전모의'];
+                    title = document.getElementById('singleTitle').value || '단일 지문 실전 모의고사';
+                    tags = (document.getElementById('singleTags').value || '실전모의').split(',');
                     const type = document.getElementById('singleType').value;
                     const text = document.getElementById('singlePrompt').value;
                     const file = document.getElementById('singleFile').files[0];
                     
-                    if (!text && !file) throw new Error("지문을 입력하거나 파일을 첨부해주세요.");
-                    if (file) files.push(await fileToBase64(file));
+                    if (!text && !file && !isAppend) throw new Error("지문을 입력하거나 파일을 첨부해주세요.");
+                    if (file && !isAppend) files.push(await fileToBase64(file));
 
-                    let typeDesc = "";
-                    if(type === 'concept') typeDesc = "객관식 15문제와 서술형 5문제를 포함하여 **총 20문제**";
-                    if(type === 'hard_mcq') typeDesc = "매력적인 함정이 섞인 고난도 5지선다 객관식으로만 **총 20문제**";
-                    if(type === 'killer') typeDesc = "<보기> 합답형 및 추론형 위주로 난이도를 극상으로 올려 **총 10~15문제**";
+                    let typeDesc = type === 'concept' ? "객관식 7제와 서술형 3제" : type === 'hard_mcq' ? "매력적 오답이 섞인 5지선다 객관식 10제" : "<보기> 합답형 및 추론형 위주 10제";
 
-                    prompt = `당신은 대한민국 최고의 수능 출제위원입니다. 제공된 지문/개념을 바탕으로 다음 요건에 맞춰 실전 모의고사를 출제하세요.
-
-[출제 요구사항]
-- 분량: ${typeDesc}를 반드시 채워서 출제하세요. (문제가 부족하면 안 됩니다.)
-- 수준: 실전 모의고사 수준의 정교한 논리 구조를 가지게 출제.
-
-[원본 지문/개념]:
-${text}
-
-${EXAM_FORMAT_RULES}`;
+                    prompt = `당신은 수능 출제위원입니다. 제공된 지문/개념을 바탕으로 ${typeDesc}를 출제하세요.${appendInstruction}\n\n[원본 지문]:\n${text}\n\n${EXAM_FORMAT_RULES}`;
                 } 
                 else if (mode === 'fusion') {
-                    title = document.getElementById('fusionTitle').value || "융합형 킬러 보스전 (다지문)";
+                    title = document.getElementById('fusionTitle').value || "융합형 킬러 보스전";
                     tags = ["융합", "킬러모의"];
                     const text1 = document.getElementById('fusionPrompt1').value;
                     const text2 = document.getElementById('fusionPrompt2').value;
                     
-                    if (!text1 || !text2) throw new Error("두 개의 지문을 모두 정확히 입력해야 합니다.");
+                    if ((!text1 || !text2) && !isAppend) throw new Error("두 개의 지문을 모두 입력해야 합니다.");
 
-                    prompt = `당신은 최고 난이도 수능 국어/탐구 출제위원입니다. 다음 완전히 다른 두 지문 (가)와 (나)를 엮어서, 두 지문을 모두 이해해야만 풀 수 있는 [수능형 융합 킬러 모의고사]를 **총 10문제 내외**로 넉넉하게 출제하세요.
-
-[지문 (가)]:
-${text1}
-
-[지문 (나)]:
-${text2}
-
-[출제 지침]:
-- 두 지문의 관점 비교, 공통점/차이점, (가)의 관점에서 (나)를 비판하기 등의 고난도 추론 문항 위주로 구성하세요.
-- 각 문제마다 1개의 정답과 4개의 매력적이고 논리적인 오답 선지를 만드세요.
-
-${EXAM_FORMAT_RULES}`;
+                    prompt = `당신은 수능 출제위원입니다. (가)와 (나)를 엮어 고난도 융합 문제를 출제하세요.${appendInstruction}\n\n[지문 (가)]:\n${text1}\n\n[지문 (나)]:\n${text2}\n\n${EXAM_FORMAT_RULES}`;
                 }
 
                 const aiText = await callGeminiAPI(prompt, files);
                 
-                // 해설 분리 로직
+                // 해설 분리 로직 (====ANSWER==== 기준 또는 Fallback)
+                let newQ = "", newA = "";
                 if (aiText.includes('====ANSWER====')) {
                     const parts = aiText.split('====ANSWER====');
-                    qArea.innerHTML = marked.parse(parts[0].trim());
-                    aArea.innerHTML = marked.parse("## 🎯 정답 및 심층 해설\n\n" + parts[1].trim());
+                    newQ = parts[0].trim();
+                    newA = parts[1].trim();
                 } else {
-                    qArea.innerHTML = marked.parse(aiText);
-                    aArea.innerHTML = "<p style='color:red; font-weight:bold;'>출제 중 오류: 해설 영역 분리선(====ANSWER====)이 누락되었습니다. 생성된 텍스트 하단에서 해설을 확인하세요.</p>";
+                    // Fallback: AI가 말을 안 들었을 때 '정답 및 해설' 이라는 키워드로 자르기 시도
+                    const fallbackParts = aiText.split(/##?\s*정답\s*및\s*해설|\[정답\]/);
+                    if (fallbackParts.length > 1) {
+                        newQ = fallbackParts[0].trim();
+                        newA = fallbackParts[1].trim();
+                    } else {
+                        newQ = aiText;
+                        newA = "> 해설 분리에 실패했습니다. 본문 내에 해설이 포함되어 있을 수 있습니다.";
+                    }
                 }
 
-                aArea.style.display = 'none'; 
+                // 누적 로직
+                accumulatedQuestions[mode] += (isAppend ? "\n\n---\n\n" : "") + newQ;
+                accumulatedAnswers[mode] += (isAppend ? "\n\n---\n\n" : "") + newA;
+                questionOffset[mode] += 10;
+
+                qArea.innerHTML = marked.parse(accumulatedQuestions[mode]);
+                aArea.innerHTML = marked.parse("## 🎯 누적 정답 및 해설\n\n" + accumulatedAnswers[mode]);
+
+                aArea.style.display = 'none'; // 문제 푸는 동안 해설 숨김
                 resultWrapper.style.display = 'block';
+                appendBtn.style.display = 'inline-flex'; // 이어서 출제 버튼 노출
 
                 if (window.MathJax) MathJax.typesetPromise([qArea, aArea]);
 
-                // 보관함 저장
-                await saveToArchive(title, tags, aiText);
+                // 보관함 저장 (누적된 전체 내용)
+                await saveToArchive(title + ` (${questionOffset[mode]}제)`, tags, accumulatedQuestions[mode] + "\n\n====ANSWER====\n\n" + accumulatedAnswers[mode]);
 
             } catch (err) {
                 errorBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> 출제 실패: ${err.message}`;
                 errorBox.style.display = 'block';
-                panel.style.display = 'block';
             } finally {
                 loader.style.display = 'none';
             }
@@ -475,21 +451,21 @@ ${EXAM_FORMAT_RULES}`;
 
         // 보관함 로직
         async function saveToArchive(title, tags, content) {
-            let archive = await localforage.getItem('TestVaultPro') || [];
+            let archive = await localforage.getItem('VaultV3') || [];
+            // 같은 제목의 모의고사가 있으면 최신(누적본)으로 업데이트
+            const existingIdx = archive.findIndex(i => i.title.startsWith(title.split(' (')[0]));
+            if(existingIdx > -1) archive.splice(existingIdx, 1);
+            
             archive.unshift({ id: Date.now(), date: new Date().toLocaleString('ko-KR'), title, tags, content });
-            await localforage.setItem('TestVaultPro', archive);
+            await localforage.setItem('VaultV3', archive);
         }
 
         async function loadArchive() {
             const list = document.getElementById('archiveList');
-            let archive = await localforage.getItem('TestVaultPro') || [];
+            let archive = await localforage.getItem('VaultV3') || [];
             
             if (archive.length === 0) { 
-                list.innerHTML = `
-                <div style="text-align:center; padding:50px; background:white; border-radius:16px; border:1px dashed #CBD5E1;">
-                    <i class="fa-solid fa-folder-open" style="font-size:3rem; color:#94A3B8; margin-bottom:15px;"></i>
-                    <div style="color:var(--text-sub); font-weight:700;">아직 저장된 모의고사가 없습니다.</div>
-                </div>`;
+                list.innerHTML = `<div style="text-align:center; padding:50px; background:white; border-radius:16px;"><i class="fa-solid fa-folder-open" style="font-size:3rem; color:#94A3B8; margin-bottom:15px;"></i><div style="font-weight:700;">아직 저장된 모의고사가 없습니다.</div></div>`;
                 return; 
             }
             
@@ -500,26 +476,20 @@ ${EXAM_FORMAT_RULES}`;
                     <div class="archive-info" onclick="viewArchive(${item.id})">
                         <div class="archive-title">${item.title}</div>
                         <div style="margin-bottom: 8px;">${tagsHtml}</div>
-                        <div class="archive-meta"><i class="fa-regular fa-clock"></i> 출제 일시: ${item.date}</div>
                     </div>
-                    <div>
-                        <button class="btn-action btn-del" onclick="deleteArchive(${item.id})"><i class="fa-solid fa-trash"></i> 삭제</button>
-                    </div>
+                    <div><button class="btn-action btn-del" onclick="deleteArchive(${item.id})"><i class="fa-solid fa-trash"></i> 삭제</button></div>
                 </div>`;
             }).join('');
         }
 
         async function viewArchive(id) {
-            let archive = await localforage.getItem('TestVaultPro') || [];
+            let archive = await localforage.getItem('VaultV3') || [];
             const item = archive.find(i => i.id === id);
             if (!item) return;
 
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.menu-item')[0].classList.add('active');
-            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
-            document.getElementById('page-single').classList.add('active');
-            
+            navTo('single');
             document.getElementById('singlePanel').style.display = 'none'; 
+            document.getElementById('singleAppendBtn').style.display = 'none'; // 열람 모드에선 추가 금지
             
             const qArea = document.getElementById('singleQuestionArea');
             const aArea = document.getElementById('singleAnswerArea');
@@ -530,7 +500,7 @@ ${EXAM_FORMAT_RULES}`;
                 aArea.innerHTML = marked.parse("## 🎯 정답 및 심층 해설\n\n" + parts[1].trim());
             } else {
                 qArea.innerHTML = marked.parse(item.content);
-                aArea.innerHTML = "<p>해설 데이터가 분리되지 않았습니다.</p>";
+                aArea.innerHTML = "<p>해설 데이터 분리 실패.</p>";
             }
             
             aArea.style.display = 'none'; 
@@ -542,9 +512,9 @@ ${EXAM_FORMAT_RULES}`;
 
         async function deleteArchive(id) {
             if(!confirm("이 모의고사를 영구적으로 삭제하시겠습니까?")) return;
-            let archive = await localforage.getItem('TestVaultPro') || [];
+            let archive = await localforage.getItem('VaultV3') || [];
             archive = archive.filter(i => i.id !== id);
-            await localforage.setItem('TestVaultPro', archive);
+            await localforage.setItem('VaultV3', archive);
             loadArchive(); 
         }
     </script>
