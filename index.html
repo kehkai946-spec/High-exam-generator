@@ -149,7 +149,7 @@
                         <textarea id="singlePrompt" rows="6" placeholder="분석할 지문을 붙여넣으세요."></textarea>
                     </div>
                     <div class="form-group">
-                        <!-- 🔥 용량 제한 20MB로 변경 및 안내 텍스트 수정 -->
+                        <!-- 용량 제한 20MB -->
                         <label>교재 사진/PDF 첨부 (20MB 이하 권장)</label>
                         <div class="upload-zone">
                             <input type="file" id="singleFile" accept="image/*,.pdf,.txt" onchange="handleFile('singleFile', 'singlePreview')">
@@ -161,7 +161,6 @@
                     </div>
                     
                     <button class="btn-primary" onclick="generateTest('single', false)"><i class="fa-solid fa-play"></i> 10문제 출제 시작</button>
-                    <!-- 이어붙이기 버튼 -->
                     <button class="btn-primary btn-append" id="singleAppendBtn" onclick="generateTest('single', true)"><i class="fa-solid fa-plus"></i> 10문제 추가 출제 (기존 시험지에 누적)</button>
                     
                     <div id="singleError" class="error-box"></div>
@@ -176,7 +175,6 @@
                     </div>
                     <div id="pdfSingle" class="document-view">
                         <div id="singleQuestionArea"></div>
-                        <!-- 해설 영역 -->
                         <div class="answer-section" id="singleAnswerArea"></div>
                     </div>
                 </div>
@@ -245,7 +243,6 @@
     <script>
         localforage.config({ name: 'TestFactoryV3', storeName: 'VaultV3' });
 
-        // 출제 상태 누적을 위한 변수
         let accumulatedQuestions = { single: "", fusion: "" };
         let accumulatedAnswers = { single: "", fusion: "" };
         let questionOffset = { single: 0, fusion: 0 }; 
@@ -263,10 +260,11 @@
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
             
+            if(pageId === 'single') document.getElementById('singlePanel').style.display = 'block';
+            if(pageId === 'fusion') document.getElementById('fusionPanel').style.display = 'block';
             if(pageId === 'archive') loadArchive();
         }
 
-        // 🔥 용량 제한 20MB로 상향
         function handleFile(inputId, previewId) {
             const file = document.getElementById(inputId).files[0];
             if (file) {
@@ -321,12 +319,13 @@
 
         const EXAM_FORMAT_RULES = `
 [출제자 절대 준수 규칙 - 시스템 에러 방지용]
-1. 객관식 선지(①~⑤)는 가독성을 위해 **반드시 각각 새로운 줄(Enter)에서 시작**하세요. (한 줄에 이어서 쓰기 절대 금지)
+1. 객관식 선지(①, ②, ③, ④, ⑤)는 무조건 앞에 줄바꿈을 두 번(엔터 2번) 넣어서 완전히 독립된 줄에 작성하세요. 절대 한 줄에 연달아 쓰지 마세요.
 2. 문제 상황이나 제시문이 들어가는 <보기> 영역은 반드시 마크다운 인용구(> )를 사용하여 박스로 렌더링되게 하세요.
 3. 기호는 자유롭게 쓰되, 수식은 반드시 이중 달러 기호($$수식$$)를 사용하세요. 단일 달러기호($)는 절대 금지.
 4. [가장 중요] 10문제 출제가 모두 끝난 후, 반드시 새 줄에 '====ANSWER====' 라는 문자열을 정확히 한 번만 삽입하세요.
-5. '====ANSWER====' 문자열 아래에는 위에서 출제한 모든 문제의 정답과 상세한 해설을 한 번에 모아서 작성하세요. 절대 문제 바로 밑에 해설을 달지 마세요.`;
+5. '====ANSWER====' 문자열 아래에는 위에서 출제한 모든 문제의 정답과 상세한 해설을 한 번에 모아서 작성하세요. 절대 문제 사이사이에 해설을 달지 마세요.`;
 
+        // 🔥 요청하신 API 모델명 원상복구: gemini-3.6-flash
         async function callGeminiAPI(prompt, files = []) {
             const apiKey = document.getElementById('sysApiKey').value;
             if (!apiKey) throw new Error("설정 메뉴에서 API Key를 먼저 입력해주세요.");
@@ -353,7 +352,13 @@
             if (data.error) throw new Error(data.error.message);
             if (!data.candidates || data.candidates.length === 0) throw new Error(`AI 생성이 차단되었습니다.`);
             
-            return data.candidates[0].content.parts[0].text;
+            let rawText = data.candidates[0].content.parts[0].text;
+
+            // 🔥 완벽한 방어 로직: AI가 규칙을 무시해도 정규식(Regex)으로 선지(①~⑤) 앞에 강제 엔터 부여
+            rawText = rawText.replace(/([①②③④⑤])/g, '\n\n$1');
+            rawText = rawText.replace(/\n{3,}/g, '\n\n'); // 불필요하게 늘어난 과잉 엔터 정리
+
+            return rawText;
         }
 
         async function generateTest(mode, isAppend = false) {
@@ -406,14 +411,12 @@
 
                 const aiText = await callGeminiAPI(prompt, files);
                 
-                // 해설 분리 로직 (====ANSWER==== 기준 또는 Fallback)
                 let newQ = "", newA = "";
                 if (aiText.includes('====ANSWER====')) {
                     const parts = aiText.split('====ANSWER====');
                     newQ = parts[0].trim();
                     newA = parts[1].trim();
                 } else {
-                    // Fallback: AI가 말을 안 들었을 때 '정답 및 해설' 이라는 키워드로 자르기 시도
                     const fallbackParts = aiText.split(/##?\s*정답\s*및\s*해설|\[정답\]/);
                     if (fallbackParts.length > 1) {
                         newQ = fallbackParts[0].trim();
@@ -424,7 +427,6 @@
                     }
                 }
 
-                // 누적 로직
                 accumulatedQuestions[mode] += (isAppend ? "\n\n---\n\n" : "") + newQ;
                 accumulatedAnswers[mode] += (isAppend ? "\n\n---\n\n" : "") + newA;
                 questionOffset[mode] += 10;
@@ -432,13 +434,12 @@
                 qArea.innerHTML = marked.parse(accumulatedQuestions[mode]);
                 aArea.innerHTML = marked.parse("## 🎯 누적 정답 및 해설\n\n" + accumulatedAnswers[mode]);
 
-                aArea.style.display = 'none'; // 문제 푸는 동안 해설 숨김
+                aArea.style.display = 'none'; 
                 resultWrapper.style.display = 'block';
-                appendBtn.style.display = 'inline-flex'; // 이어서 출제 버튼 노출
+                appendBtn.style.display = 'inline-flex'; 
 
                 if (window.MathJax) MathJax.typesetPromise([qArea, aArea]);
 
-                // 보관함 저장 (누적된 전체 내용)
                 await saveToArchive(title + ` (${questionOffset[mode]}제)`, tags, accumulatedQuestions[mode] + "\n\n====ANSWER====\n\n" + accumulatedAnswers[mode]);
 
             } catch (err) {
@@ -449,10 +450,8 @@
             }
         }
 
-        // 보관함 로직
         async function saveToArchive(title, tags, content) {
             let archive = await localforage.getItem('VaultV3') || [];
-            // 같은 제목의 모의고사가 있으면 최신(누적본)으로 업데이트
             const existingIdx = archive.findIndex(i => i.title.startsWith(title.split(' (')[0]));
             if(existingIdx > -1) archive.splice(existingIdx, 1);
             
@@ -489,19 +488,27 @@
 
             navTo('single');
             document.getElementById('singlePanel').style.display = 'none'; 
-            document.getElementById('singleAppendBtn').style.display = 'none'; // 열람 모드에선 추가 금지
+            document.getElementById('singleAppendBtn').style.display = 'none'; 
             
             const qArea = document.getElementById('singleQuestionArea');
             const aArea = document.getElementById('singleAnswerArea');
             
+            let displayQ = "", displayA = "";
+            
             if (item.content.includes('====ANSWER====')) {
                 const parts = item.content.split('====ANSWER====');
-                qArea.innerHTML = marked.parse(parts[0].trim());
-                aArea.innerHTML = marked.parse("## 🎯 정답 및 심층 해설\n\n" + parts[1].trim());
+                displayQ = parts[0].trim();
+                displayA = parts[1].trim();
             } else {
-                qArea.innerHTML = marked.parse(item.content);
-                aArea.innerHTML = "<p>해설 데이터 분리 실패.</p>";
+                displayQ = item.content;
+                displayA = "해설 데이터 분리 실패.";
             }
+
+            // 아카이브 렌더링 시에도 안전하게 한 번 더 줄바꿈 정규식 처리
+            displayQ = displayQ.replace(/([①②③④⑤])/g, '\n\n$1').replace(/\n{3,}/g, '\n\n');
+            
+            qArea.innerHTML = marked.parse(displayQ);
+            aArea.innerHTML = marked.parse("## 🎯 정답 및 심층 해설\n\n" + displayA);
             
             aArea.style.display = 'none'; 
             document.getElementById('singleResultWrapper').style.display = 'block';
