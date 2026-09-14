@@ -129,11 +129,11 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>시험지 제목</label>
-                            <input type="text" id="singleTitle" placeholder="예: [문학] 파우스트 실전 대비">
+                            <input type="text" id="singleTitle" placeholder="예: 국제정치 실전 대비 모의고사">
                         </div>
                         <div class="form-group">
                             <label>과목/태그</label>
-                            <input type="text" id="singleTags" placeholder="예: 국어, 문학">
+                            <input type="text" id="singleTags" placeholder="예: 국제정치, 융합사고">
                         </div>
                     </div>
                     <div class="form-group">
@@ -146,10 +146,9 @@
                     </div>
                     <div class="form-group">
                         <label>출제 기반 텍스트 (지문)</label>
-                        <textarea id="singlePrompt" rows="6" placeholder="분석할 지문을 붙여넣으세요."></textarea>
+                        <textarea id="singlePrompt" rows="6" placeholder="분석할 지문을 붙여넣으세요. 이 내용 안에서만 문제가 출제됩니다."></textarea>
                     </div>
                     <div class="form-group">
-                        <!-- 용량 제한 20MB -->
                         <label>교재 사진/PDF 첨부 (20MB 이하 권장)</label>
                         <div class="upload-zone">
                             <input type="file" id="singleFile" accept="image/*,.pdf,.txt" onchange="handleFile('singleFile', 'singlePreview')">
@@ -161,6 +160,7 @@
                     </div>
                     
                     <button class="btn-primary" onclick="generateTest('single', false)"><i class="fa-solid fa-play"></i> 10문제 출제 시작</button>
+                    <!-- 이어붙이기 버튼 -->
                     <button class="btn-primary btn-append" id="singleAppendBtn" onclick="generateTest('single', true)"><i class="fa-solid fa-plus"></i> 10문제 추가 출제 (기존 시험지에 누적)</button>
                     
                     <div id="singleError" class="error-box"></div>
@@ -194,7 +194,7 @@
                     <div class="form-row">
                         <div class="form-group" style="flex:2;">
                             <label>시험지 제목</label>
-                            <input type="text" id="fusionTitle" placeholder="예: [문학 융합] 파우스트 x 앵무새 죽이기">
+                            <input type="text" id="fusionTitle" placeholder="예: [국제정치 융합] 이론 A x 이론 B">
                         </div>
                     </div>
                     <div class="form-group">
@@ -317,6 +317,7 @@
             });
         }
 
+        // 🔥 선지 가독성 및 해설 분리를 위한 강력한 프롬프트 규칙
         const EXAM_FORMAT_RULES = `
 [출제자 절대 준수 규칙 - 시스템 에러 방지용]
 1. 객관식 선지(①, ②, ③, ④, ⑤)는 무조건 앞에 줄바꿈을 두 번(엔터 2번) 넣어서 완전히 독립된 줄에 작성하세요. 절대 한 줄에 연달아 쓰지 마세요.
@@ -325,7 +326,7 @@
 4. [가장 중요] 10문제 출제가 모두 끝난 후, 반드시 새 줄에 '====ANSWER====' 라는 문자열을 정확히 한 번만 삽입하세요.
 5. '====ANSWER====' 문자열 아래에는 위에서 출제한 모든 문제의 정답과 상세한 해설을 한 번에 모아서 작성하세요. 절대 문제 사이사이에 해설을 달지 마세요.`;
 
-        // 🔥 요청하신 API 모델명 원상복구: gemini-3.6-flash
+        // 🔥 사용자가 요청한 gemini-3.6-flash 유지
         async function callGeminiAPI(prompt, files = []) {
             const apiKey = document.getElementById('sysApiKey').value;
             if (!apiKey) throw new Error("설정 메뉴에서 API Key를 먼저 입력해주세요.");
@@ -354,7 +355,7 @@
             
             let rawText = data.candidates[0].content.parts[0].text;
 
-            // 🔥 완벽한 방어 로직: AI가 규칙을 무시해도 정규식(Regex)으로 선지(①~⑤) 앞에 강제 엔터 부여
+            // 🔥 완벽한 방어 로직: AI가 규칙을 무시해도 정규식(Regex)으로 선지(①~⑤) 앞에 강제 엔터 2번 부여
             rawText = rawText.replace(/([①②③④⑤])/g, '\n\n$1');
             rawText = rawText.replace(/\n{3,}/g, '\n\n'); // 불필요하게 늘어난 과잉 엔터 정리
 
@@ -382,7 +383,11 @@
 
             try {
                 let prompt = "", title = "", files = [], tags = [];
-                let appendInstruction = isAppend ? `\n\n이전에 출제한 문제에 이어서 **${questionOffset[mode] + 1}번부터 ${questionOffset[mode] + 10}번까지 새로운 10문제**를 겹치지 않게 추가 출제하세요.` : "\n\n**1번부터 10번까지 총 10문제**를 출제하세요.";
+                
+                // 🔥 환각(Hallucination) 100% 방지: 무조건 원본 내용 안에서만 출제하도록 통제
+                let appendInstruction = isAppend 
+                    ? `\n\n[추가 출제 지시사항]\n반드시 **처음에 제공된 [원본 지문/개념]의 내용 안에서만** 추가로 문제를 출제해야 합니다. 절대 다른 과목(예: 국어, 수학 등)이나 외부 지문을 임의로 섞지 마세요. 이전에 출제한 문제와 겹치지 않게 **${questionOffset[mode] + 1}번부터 ${questionOffset[mode] + 10}번까지 새로운 10문제**를 출제하세요.` 
+                    : "\n\n**1번부터 10번까지 총 10문제**를 출제하세요.";
 
                 if (mode === 'single') {
                     title = document.getElementById('singleTitle').value || '단일 지문 실전 모의고사';
@@ -396,7 +401,7 @@
 
                     let typeDesc = type === 'concept' ? "객관식 7제와 서술형 3제" : type === 'hard_mcq' ? "매력적 오답이 섞인 5지선다 객관식 10제" : "<보기> 합답형 및 추론형 위주 10제";
 
-                    prompt = `당신은 수능 출제위원입니다. 제공된 지문/개념을 바탕으로 ${typeDesc}를 출제하세요.${appendInstruction}\n\n[원본 지문]:\n${text}\n\n${EXAM_FORMAT_RULES}`;
+                    prompt = `당신은 수능 출제위원입니다. 반드시 제공된 [원본 지문]의 내용만을 사용하여 ${typeDesc}를 출제하세요. 외부 지문이나 상관없는 과목을 절대 가져오지 마세요.${appendInstruction}\n\n[원본 지문]:\n${text}\n\n${EXAM_FORMAT_RULES}`;
                 } 
                 else if (mode === 'fusion') {
                     title = document.getElementById('fusionTitle').value || "융합형 킬러 보스전";
@@ -406,11 +411,12 @@
                     
                     if ((!text1 || !text2) && !isAppend) throw new Error("두 개의 지문을 모두 입력해야 합니다.");
 
-                    prompt = `당신은 수능 출제위원입니다. (가)와 (나)를 엮어 고난도 융합 문제를 출제하세요.${appendInstruction}\n\n[지문 (가)]:\n${text1}\n\n[지문 (나)]:\n${text2}\n\n${EXAM_FORMAT_RULES}`;
+                    prompt = `당신은 수능 출제위원입니다. 반드시 제공된 지문 (가)와 (나)의 내용만을 사용하여 융합 문제를 출제하세요. 외부 지문이나 상관없는 과목을 절대 가져오지 마세요.${appendInstruction}\n\n[지문 (가)]:\n${text1}\n\n[지문 (나)]:\n${text2}\n\n${EXAM_FORMAT_RULES}`;
                 }
 
                 const aiText = await callGeminiAPI(prompt, files);
                 
+                // 해설 분리 로직 (====ANSWER==== 기준 또는 Fallback)
                 let newQ = "", newA = "";
                 if (aiText.includes('====ANSWER====')) {
                     const parts = aiText.split('====ANSWER====');
